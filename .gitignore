@@ -25,6 +25,4 @@ log/
 rosbag2_*/
 
 # (Optional) nested repos—Git ignores .git dirs anyway, but this is explicit
-src/*/.git_backup/
-
-
+#src/*/.git_backup/
