@@ -142,32 +142,47 @@ ros2 launch arno_robot urg_node2_2lidar.launch.py
 # frame laser_frame_1 で /scan_1st topic が見える
 # frame laser_frame_2 で /scan_1nd topic が見える
 
+#--- urg_node2 を arno_robot の設定と launcher で動かす2
+# laser_frame_1, laser_frame_2 と base_link の関係を定義する
+# ここに書いてある。
+# src/arno_robot/launch/static_transforms.launch.py 
+# ロボットの Arno と違って 83 mm 前と 83 mm 後ろの位置でに前後に向けられている。
 
+# static_transforms.launch.py と urg_node2_2lidar.launch.py を合わせて動かす。
+# src/arno_robot/launch/urg_node2_2lidar_linked.launch.py 
 
---------------------------以下はまだ
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch arno_robot myscripts/com_002_test_urgnode_linked.bash
 
+# frame base_link
+# topic /scan_1st と /scan_2nd
+#
+rviz2 -d config_rviz2/urg_node2_2lidar.rviz
 
-# -- 2台の 2D lidar を1つのフレームに合わせる laser_scan_merger パッケージの導入
-# 次の github 参考
-https://github.com/BruceChanJianLe/laser_scan_merger
-
-cd arno2b_ws/src
+#--- laser_scan_merger で /merged_scan topic をつくる。
+# package をコピーしてビルド
+cd src/
 git clone https://github.com/BruceChanJianLe/laser_scan_merger.git
-
-cd ..   (cd arno2b_ws)
 rosdep install --from-paths src --ignore-src -r -y
+cd ..
 colcon build --symlink-install
 
-# または
-bash myscripts/com_build_all.bash
+# 先の urg_node2_2lidar_linked.launch.py とは別に
+# 別ウインドウで laser_scan_merger を動かして動作確認する。
+# src/arno_robot/launch/laser_scan_merger_standalone.launch.py を使う
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch arno_robot laser_scan_merger_standalone.launch.py
 
-# 設定
-# 設定ファイル  src/arno_robot/config/param_laser_scan_merger.yaml
-# 次の topic と frame を指定する
-#    scan_topics: ["/scan_1st", "/scan_2nd"]
-#    frames: ["laser_frame_1", "laser_frame_2"]
+# みてみる
+rviz -d config_rviz2/laser_scan_merger.rviz
 
-# laser_frame_1, laser_frame_2 と base_link の関係を定義する
-# static_starnsforms.launch をつくる
-# src/arno_robot/launch/static_transforms.launch.py
-# ロボットの Arno と違って 83 mm 前と 83 mm 後ろの位置でに前後に向けられている。
+# urg3d_node と tf と laser_scan_merger をまとめて立ち上げる lancuher
+# src/arno_robot/launch/laser_scan_merger_with_urg_node2_2lidar_linked.launch.py 
+# を使う
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch arno_robot laser_scan_merger_with_urg_node2_2lidar_linked.launch.py 
+
+# 以上 2025-09-05
