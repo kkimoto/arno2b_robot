@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>arno_robot</name>
+  <version>0.0.1</version>
+  <description>TODO: Package description</description>
+  <maintainer email="kimoto@todo.todo">kimoto</maintainer>
+  <license>TODO: License declaration</license>
+
+  <!-- build tool for ament_python packages -->
+  <buildtool_depend>setuptools</buildtool_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+ <!-- runtime deps used by your launch file & lifecycle setup -->
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>lifecycle_msgs</exec_depend>
+
+  <!-- YAML is loaded in the launch file -->
+  <exec_depend>python3-yaml</exec_depend>
+
+  <!-- the driver you launch from arno_robot -->
+  <exec_depend>urg3d_node2</exec_depend>
+
+  <!-- if you add Python nodes later, also add: <exec_depend>rclpy</exec_depend> -->
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

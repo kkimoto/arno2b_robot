@@ -1,0 +1,94 @@
+#--- 最初の準備
+
+# ROS2 humble のインストール
+# rosdep のインストール
+sudo apt install python3-rosdep2
+
+# ワークスペースを作る
+# make next version (b) workspace
+mkdir arno2b_ws
+cd    arno2b_ws
+mkdir src
+
+# rviz2 の準備
+# 木元の環境では rviz を他のPCに表示する
+# 他のPCで表示を受け付けるようにする
+xhost +
+# ロボット(ROS2)の PC で遠隔表示をする準備
+export DISPLAY=192.168.0.56:0
+
+#--- YVT (3D lidar) と urg3d_node2 package のテスト
+
+# test YVT sensor and urg3d_node2 package
+cd arno2b_ws/src
+git clone --recursive https://github.com/Hokuyo-aut/urg3d_node2
+rosdep update
+rosdep install -i --from-paths urg3d_node2
+cd ..
+# IP アドレスを実機に合わせておく 
+# src/urg3d_node2/config/params.yaml
+# の次の行
+#     ip_address: '192.168.0.10'
+
+# ビルド
+colcon build --symlink-install
+# YVT-35LX の電源を入れて、ネットワーク接続する。
+# test run
+source install/setup.bash
+ros2 launch urg3d_node2 urg3d_node2.launch.py
+# または
+bash myscripts/com_001_test1_urgnode2.bash
+
+# rviz2 で確かめる
+ros2 topic echo /hokuyo_cloud2|egrep frame
+# frame_id: hokuyo3d とでるので
+# rviz2 では
+# Fixed Frame hokuyo3d
+# Add から PointCloud2 /hokuyo_cloud2 を選択する
+# またはすでに設定がしているファイルを指定する
+cd arno2b_ws
+rviz2 -d ~/.rviz2/urg3d_node2.rviz
+
+#--- 統合パッケージを作る
+#    new package arno2_robot
+cd arno2b_ws/src
+ros2 pkg create --build-type ament_python arno_robot
+cd arno_robot
+mkdir -p config launch resource
+cd ../..
+echo "arno_robot" > src/arno_robot/resource/arno_robot
+
+#--- urg3d_node2 package を独自の設定で動かす
+#    arno_robot パッケージに設定を入れて動かす
+
+# arno_robot パッケージ設定の編集
+# src/arno_robot/setup.cfg
+# src/arno_robot/setup.py
+
+cp src/urg3d_node2/launch/urg3d_node2.launch.py src/arno_robot/launch/urg3d_node2_settingA.launch.py
+cp src/urg3d_node2/config/params.yaml src/arno_robot/config/params_yvt.yaml
+
+# 'params_yvt.yaml' は src/arno_robot/launch/urg3d_node2_settingA.launch.py の中で指定する。
+#下のソースの4行目のようにする
+#    config_file_path = os.path.join(
+#        get_package_share_directory('arno_robot'),
+#        'config',
+#        'params_yvt.yaml'   # keep filename; adjust if you rename
+#    )
+
+# src/arno_robot/config/params_yvt.yaml のパラメータを変える。例えば
+#
+#   interlace_h: 4
+
+# arno_robot パッケージのビルド
+colcon build --symlink-install --packages-select arno_robot
+
+#または全部作り直す # rm -f は強制的に消すので扱いは気をつけて
+rm -rf build install log
+colcon build --symlink-install
+
+# arno_robot パッケージを独自 launch ファイルで実行
+ros2 launch arno_robot urg3d_node2_settingA.launch.py
+
+# rviz2 でインターレースが入っているところが見えるはず
+

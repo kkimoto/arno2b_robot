@@ -1,0 +1,38 @@
+# laser_scan_merger_node:
+#   ros__parameters:
+    # Declare laser scan topics to be subscribed here.
+    # Max 9 laser scan topics
+    scan_topics: ["/scan_1st", "/scan_2nd"]
+    frames: ["laser_frame_1", "laser_frame_2"]
+
+    # reliability policy ros2 topic: 0=reliable, 1=best effort
+    scan_policies: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    # Declare the frame id for output scan, most likely base_link is appropriate.
+    merged_frame_id: "base_link"
+
+    tolerance: 0.01
+    min_height: -1.0 # default to std::numeric_limits<double>::min() if not given
+    max_height:  1.0 # default to std::numeric_limits<double>::max() if not given
+
+    #angle_min: -2.356194496154785
+    #angle_max: 3.141592654
+    #angle_increment: 0.004363323 # pi/760 (0.25 degree step)
+
+    angle_min: -3.141592653589793
+    angle_max:  3.141592653589793
+    angle_increment: 0.004363323096185923  # 0.25 deg
+
+
+    angle_increment: 0.004363323096185923
+    scan_time: 0.025 # 40 Hz
+    range_min: 0.06
+    range_max: 100.0 # default to std::numeric_limits<double>::max() if not given
+    inf_epsilon: 1.0
+
+    use_inf: false   # true
+    # Queue size for approximate filter
+    queue_size: 100  # 20
+
+    debug: true
+    moving_frames: true # false

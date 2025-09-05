@@ -1,0 +1,76 @@
+lidar1:
+  ros__parameters:
+    ip_address: 192.168.0.11
+    ip_port: 10940
+    frame_id: laser_frame_1
+    calibrate_time: false
+    synchronize_time: false
+    publish_intensity: false
+    publish_multiecho: false
+    error_limit: 4
+    error_reset_period: 5.0
+    diagnostics_tolerance: 0.05
+    diagnostics_window_time: 5.0
+    time_offset: 0.0
+    angle_min: -3.14
+    angle_max: 3.14
+    skip: 0
+    cluster: 1
+lidar2:
+  ros__parameters:
+    ip_address: 192.168.0.12
+    ip_port: 10940
+    frame_id: laser_frame_2
+    calibrate_time: false
+    synchronize_time: false
+    publish_intensity: false
+    publish_multiecho: false
+    error_limit: 4
+    error_reset_period: 5.0
+    diagnostics_tolerance: 0.05
+    diagnostics_window_time: 5.0
+    time_offset: 0.0
+    angle_min: -3.14
+    angle_max: 3.14
+    skip: 0
+    cluster: 1
+yvt_3d:
+  ros__parameters:
+    ip_address: 192.168.0.10
+    ip_port: 10940
+    frame_id: hokuyo3d
+    range_min: 0.1
+    interlace_h: 4
+    interlace_v: 1
+    output_cycle: frame
+    publish_intensity: true
+    publish_auxiliary: false
+    calibrate_time: false
+    synchronize_time: false
+    error_limit: 4
+    error_reset_period: 10.0
+    diagnostics_tolerance: 0.05
+    diagnostics_window_time: 5.0
+scan_merger:
+  ros__parameters:
+    # Inputs (max 9 lidars)
+    scan_topics: ["/scan_1st", "/scan_2nd"]
+    frames: ["laser_frame_1", "laser_frame_2"]
+    scan_policies: [0, 0]  # reliability policy ros2 topic: 0=reliable, 1=best effort
+    # Output
+    merged_frame_id: "base_link"
+
+    tolerance: 0.01
+    min_height: -1.0
+    max_height:  1.0
+    angle_min: -3.141592653589793
+    angle_max:  3.141592653589793
+    angle_increment: 0.004363323096185923  # 0.25 deg
+    scan_time: 0.025                       # 40 Hz
+    range_min: 0.06
+    range_max: 100.0
+    inf_epsilon: 1.0
+    use_inf: false   # true
+    queue_size: 100  # 20 # Queue size for approximate filter
+    debug: true
+    moving_frames: false
