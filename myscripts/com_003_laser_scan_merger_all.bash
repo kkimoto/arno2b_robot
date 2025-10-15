@@ -1,5 +1,5 @@
 
-com ="source install/setup.bash" 
+com="source install/setup.bash" 
 echo $com
 $com
 
